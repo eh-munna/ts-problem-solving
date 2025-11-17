@@ -9,8 +9,6 @@ const formatValue = (
   return !value;
 };
 
-// ---------------------------- //
-
 const getLength = <T>(value: string | T[]): number => {
   if (typeof value === 'string') {
     return value.length;
@@ -18,11 +16,8 @@ const getLength = <T>(value: string | T[]): number => {
   if (Array.isArray(value)) {
     return value.length;
   }
-  throw new Error('Invalid input');
+  return 0;
 };
-
-// ---------------------------- //
-
 class Person {
   name: string;
   age: number;
@@ -36,8 +31,6 @@ class Person {
   }
 }
 
-// ---------------------------- //
-
 interface IBook {
   title: string;
   rating: number;
@@ -46,15 +39,14 @@ interface IBook {
 const filterByRating = (items: IBook[]): IBook[] => {
   for (const item of items) {
     if (item.rating < 0 || item.rating > 5) {
-      throw new Error(`Invalid rating: ${item.rating}. Must be between 0 and 5.`);
+      throw new Error(
+        `Invalid rating: ${item.rating}. Must be between 0 and 5.`
+      );
     }
   }
 
-  return items.filter(item => item.rating >= 4);
+  return items.filter((item) => item.rating >= 4);
 };
-
-
-// ---------------------------- //
 
 interface IUser {
   id: number;
@@ -66,8 +58,6 @@ interface IUser {
 const filterActiveUsers = (users: IUser[]): IUser[] => {
   return users.filter((user) => user.isActive);
 };
-
-// ---------------------------- //
 
 interface Book {
   title: string;
@@ -84,32 +74,39 @@ const printBookDetails = (book: Book) => {
   );
 };
 
-// ---------------------------- //
-
 const getUniqueValues = <T extends string | number>(
-  arr: T[],
+  arr1: T[],
   arr2: T[]
 ): T[] => {
   const result: T[] = [];
-  const merged = [...arr, ...arr2];
-  for (let i = 0; i < merged.length; i++) {
-    const item = merged[i];
-    let isDuplicate = false;
-    for (let j = 0; j < result.length; j++) {
-      if (item === result[j]) {
-        isDuplicate = true;
-        break;
+  let length: number = 0;
+
+  const manualPush = (item: T): void => {
+    result[length] = item;
+    length++;
+  };
+
+  const isIncludes = (item: T): boolean => {
+    for (let i = 0; i < length; i++) {
+      if (item === result[i]) {
+        return true;
       }
     }
+    return false;
+  };
 
-    if (!isDuplicate) {
-      result.push(item);
+  for (let i = 0; i < arr1.length; i++) {
+    if (!isIncludes(arr1[i])) {
+      manualPush(arr1[i]);
+    }
+  }
+  for (let i = 0; i < arr2.length; i++) {
+    if (!isIncludes(arr2[i])) {
+      manualPush(arr2[i]);
     }
   }
   return result;
 };
-
-// ---------------------------- //
 
 interface IProduct {
   name: string;
@@ -129,11 +126,3 @@ const calculateTotalPrice = (products: IProduct[]): number => {
     return total + finalPrice;
   }, 0);
 };
-
-const products = [
-  { name: 'Pen', price: 10, quantity: 2 },
-  { name: 'Notebook', price: 25, quantity: 3, discount: 10 },
-  { name: 'Bag', price: 50, quantity: 1, discount: 20 },
-];
-
-console.log(calculateTotalPrice(products));
